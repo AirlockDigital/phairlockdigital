@@ -4,8 +4,8 @@
     "description": "This app integrates your system with Airlock Digitals Endpoints",
     "type": "endpoint",
     "product_vendor": "Airlock",
-    "logo": "airlockdigital.png",
-    "logo_dark": "airlockdigital_dark.png",
+    "logo": "airlockdigital.svg",
+    "logo_dark": "airlockdigital_dark.svg",
     "product_name": "Airlock Digital",
     "product_version_regex": ".*",
     "publisher": "Domenico Perre",
@@ -75,12 +75,12 @@
                     "required": true,
                     "primary": false,
                     "contains": [],
-                    "value_list": ["application", "baseline", "blacklist"],
-                    "default": "blacklist",
+                    "value_list": ["application", "baseline", "blocklist"],
+                    "default": "blocklist",
                     "order": 1
                 },
                 "policy_id": {
-                    "description": "Policy ID, either the specific blacklist id, application id, baseline id or 'all' for removing the hash from all lists of the selected policy type",
+                    "description": "Policy ID, either the specific blocklist id, application id, baseline id or 'all' for removing the hash from all lists of the selected policy type",
                     "data_type": "string",
                     "required": true,
                     "primary": false,
@@ -150,18 +150,18 @@
         {
             "action": "list policies",
             "identifier": "list_policies",
-            "description": "Gathers a list of policies related to an application, baseline or blacklist",
+            "description": "Gathers a list of policies related to an application, baseline or blocklist",
             "verbose": "",
             "type": "correct",
             "read_only": true,
             "parameters": {
                 "policy_type": {
-                    "description": "The policy type, can be application, baseline or blacklist",
+                    "description": "The policy type, can be application, baseline or blocklist",
                     "data_type": "string",
                     "required": true,
                     "primary": true,
                     "contains": [],
-                    "value_list": ["baseline", "blacklist", "group"],
+                    "value_list": ["baseline", "blocklist", "group"],
                     "default": "",
                     "order": 0
                 },
@@ -394,7 +394,7 @@
                     "required": true,
                     "primary": false,
                     "contains": [],
-                    "value_list": ["all", "application", "baseline", "blacklist"],
+                    "value_list": ["all", "application", "baseline", "blocklist"],
                     "default": "all",
                     "order": 1
                 }
@@ -421,10 +421,10 @@
                     "column_order": 1
                 },
                 {
-                    "data_path": "action_result.parameter.blacklistid",
+                    "data_path": "action_result.parameter.blocklistid",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "blacklistid",
+                    "column_name": "blocklistid",
                     "column_order": 2
                 },
                 {
@@ -841,24 +841,11 @@
                     "primary": false,
                     "contains": [],
                     "value_list": [
-                        "10m",
                         "15m",
-                        "30m",
-                        "45m",
                         "1h",
-                        "2h",
                         "6h",
-                        "12h",
                         "24h",
-                        "1d",
-                        "2d",
-                        "3d",
-                        "4d",
-                        "5d",
-                        "6d",
-                        "7d",
-                        "14d",
-                        "30d"
+                        "7d"
                     ],
                     "default": "15m",
                     "order": 2
@@ -973,154 +960,154 @@
                     "column_order": 0
                 },        
                 {
-                    "data_path": "action_result.data.*.response.results.*.origname",
+                    "data_path": "action_result.data.*.response.results.*.data.origname",
                     "data_type": "string",
                     "contains": ["file name"],
                     "column_name": "Original File Name",
                     "column_order": 3
                 },
                 {
-                    "data_path": "action_result.data.*.response.results.*.createtime",
+                    "data_path": "action_result.data.*.response.results.*.data.createtime",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "Create Time",
                     "column_order": 3
                 },
                 {
-                    "data_path": "action_result.data.*.response.results.*.modtime",
+                    "data_path": "action_result.data.*.response.results.*.data.modtime",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "Modification Time",
                     "column_order": 3
                 },
                 {
-                    "data_path": "action_result.data.*.response.results.*.datetime",
+                    "data_path": "action_result.data.*.response.results.*.data.datetime",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "First Seen",
                     "column_order": 3
                 },
                 {
-                    "data_path": "action_result.data.*.response.results.*.publisher",
+                    "data_path": "action_result.data.*.response.results.*.data.publisher",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "Publisher",
                     "column_order": 3
                 },
                 {
-                    "data_path": "action_result.data.*.response.results.*.filesize",
+                    "data_path": "action_result.data.*.response.results.*.data.filesize",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "filesize",
                     "column_order": 3
                 },
                 {
-                    "data_path": "action_result.data.*.response.results.*.publisher",
+                    "data_path": "action_result.data.*.response.results.*.data.publisher",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "Publisher",
                     "column_order": 3
                 },
                 {
-                    "data_path": "action_result.data.*.response.results.*.md5",
+                    "data_path": "action_result.data.*.response.results.*.data.md5",
                     "data_type": "string",
                     "contains": ["md5"],
                     "column_name": "MD5",
                     "column_order": 3
                 },
                 {
-                    "data_path": "action_result.data.*.response.results.*.sha128",
+                    "data_path": "action_result.data.*.response.results.*.data.sha128",
                     "data_type": "string",
                     "contains": ["sha128"],
                     "column_name": "SHA128",
                     "column_order": 3
                 },
                 {
-                    "data_path": "action_result.data.*.response.results.*.sha512",
+                    "data_path": "action_result.data.*.response.results.*.data.sha512",
                     "data_type": "string",
                     "contains": ["sha512"],
                     "column_name": "SHA512",
                     "column_order": 3
                 },
                 {
-                    "data_path": "action_result.data.*.response.results.*.description",
+                    "data_path": "action_result.data.*.response.results.*.data.description",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "Description",
                     "column_order": 3
                 },
                 {
-                    "data_path": "action_result.data.*.response.results.*.productname",
+                    "data_path": "action_result.data.*.response.results.*.data.productname",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "Product Name",
                     "column_order": 3
                 },
                 {
-                    "data_path": "action_result.data.*.response.results.*.productversion",
+                    "data_path": "action_result.data.*.response.results.*.data.productversion",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "Product Version",
                     "column_order": 3
                 },
                 {
-                    "data_path": "action_result.data.*.response.results.*.filepath",
+                    "data_path": "action_result.data.*.response.results.*.data.filepath",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "File Path",
                     "column_order": 3
                 },
                 {
-                    "data_path": "action_result.data.*.response.results.*.filename",
+                    "data_path": "action_result.data.*.response.results.*.data.filename",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "File Name",
                     "column_order": 3
                 },
                 {
-                    "data_path": "action_result.data.*.response.results.*.reputation.status",
+                    "data_path": "action_result.data.*.response.results.*.data.reputation.status",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "Reputation Status",
                     "column_order": 3
                 },
                 {
-                    "data_path": "action_result.data.*.response.results.*.reputation.threatname",
+                    "data_path": "action_result.data.*.response.results.*.data.reputation.threatname",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "Reputation Threat Name",
                     "column_order": 3
                 },
                 {
-                    "data_path": "action_result.data.*.response.results.*.reputation.threatlevel",
+                    "data_path": "action_result.data.*.response.results.*.data.reputation.threatlevel",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "Reputation Threat Level",
                     "column_order": 3
                 },
                 {
-                    "data_path": "action_result.data.*.response.results.*.reputation.scannermatch",
+                    "data_path": "action_result.data.*.response.results.*.data.reputation.scannermatch",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "Reputation Scanner Match",
                     "column_order": 3
                 },
                 {
-                    "data_path": "action_result.data.*.response.results.*.reputation.scannercount",
+                    "data_path": "action_result.data.*.response.results.*.data.reputation.scannercount",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "Reputation Scanner Count",
                     "column_order": 3
                 },
                 {
-                    "data_path": "action_result.data.*.response.results.*.reputation.lastseen",
+                    "data_path": "action_result.data.*.response.results.*.data.reputation.lastseen",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "Reputation Last Seen",
                     "column_order": 3
                 },
                 {
-                    "data_path": "action_result.data.*.response.results.*.reputation.timestamp",
+                    "data_path": "action_result.data.*.response.results.*.data.reputation.timestamp",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "Reputation Timestamp",

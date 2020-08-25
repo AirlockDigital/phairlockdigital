@@ -209,30 +209,30 @@ class AirlockDigitalConnector(BaseConnector):
         api_key = config.get('apiKey')
 
         # Begin single selection policy changes
-        # If policy type is blacklist
-        if (policy_type == 'blacklist'):
-            # If removing from all blacklists
+        # If policy type is blocklist
+        if (policy_type == 'blocklist'):
+            # If removing from all blocklists
             if policy_id == "all":
-                url = '/hash/blacklist/remove/all'
+                url = '/hash/blocklist/remove/all'
                 # Parameter Dictionary to pass to the request
                 header_var = {
                     "X-APIKey": api_key,
                 }
                 # Append the url and the header to the url_req array
-                url_req = {'url': url, 'header_var': header_var, 'request_type': 'blacklist'}
+                url_req = {'url': url, 'header_var': header_var, 'request_type': 'blocklist'}
                 self.save_progress("Making change to URL: {} with request type of {}.".format(url_req['url'], url_req['request_type']))
                 ret_val, response = self._make_rest_call(url_req['url'], action_result, json=json_body, headers=url_req['header_var'], method="post")
 
-            # If removing from only one blacklist
+            # If removing from only one blocklist
             else:
-                url = '/hash/blacklist/remove'
+                url = '/hash/blocklist/remove'
                 # Parameter Dictionary to pass to the request
                 header_var = {
                     "X-APIKey": api_key,
                 }
-                json_body['blacklistid'] = policy_id
+                json_body['blocklistid'] = policy_id
                 # Append the url and the header to the url_req array
-                url_req.append({'url': url, 'header_var': header_var, 'request_type': 'blacklist'})
+                url_req.append({'url': url, 'header_var': header_var, 'request_type': 'blocklist'})
                 self.save_progress("Making change to URL: {} with request type of {}.".format(url_req['url'], url_req['request_type']))
                 ret_val, response = self._make_rest_call(url_req['url'], action_result, json=json_body, headers=url_req['header_var'], method="post")
 
@@ -256,7 +256,7 @@ class AirlockDigitalConnector(BaseConnector):
                     json_body['applicationid'] = application_id
 
                     # Create a dictionary with the variables we will use for the request
-                    url_req.append({'url': url, 'header_var': header_var, 'request_type': 'blacklist'})
+                    url_req.append({'url': url, 'header_var': header_var, 'request_type': 'blocklist'})
 
                     # Post a mesage to phantom console
                     self.save_progress("Making change to URL: {} with request type of {}.".format(url_req['url'], url_req['request_type']))
@@ -325,19 +325,19 @@ class AirlockDigitalConnector(BaseConnector):
             "X-APIKey": api_key
         }
 
-        # If policy type is blacklist
-        if (policy_type == 'blacklist'):
-            url = '/hash/blacklist/add'
+        # If policy type is blocklist
+        if (policy_type == 'blocklist'):
+            url = '/hash/blocklist/add'
             # Required values can be accessed directly
             request_json = {
                 "hashes": [param['hash']],
-                "blacklistid": param['blacklistid']
+                "blocklistid": param['blocklistid']
             }
             # Parameter Dictionary to pass to the request
             header_var = {
                 "X-APIKey": api_key
             }
-            url_req.append({'url': url, 'header_var': header_var, 'request_type': 'blacklist'})
+            url_req.append({'url': url, 'header_var': header_var, 'request_type': 'blocklist'})
 
         # If policy type is application
         if (policy_type == 'application'):
@@ -345,7 +345,7 @@ class AirlockDigitalConnector(BaseConnector):
             # Parameter Dictionary to pass to the request
             request_json = {
                 "hashes": [param['hash']],
-                "blacklistid": param['blacklistid']
+                "blocklistid": param['blocklistid']
             }
             header_var = {
                 "X-APIKey": api_key
@@ -357,7 +357,7 @@ class AirlockDigitalConnector(BaseConnector):
             url = '/hash/baseline/remove'
             request_json = {
                 "hashes": [param['hash']],
-                "blacklistid": param['blacklistid']
+                "blocklistid": param['blocklistid']
             }
             # Parameter Dictionary to pass to the request
             header_var = {
@@ -416,9 +416,9 @@ class AirlockDigitalConnector(BaseConnector):
             "X-APIKey": api_key
         }
 
-        # If policy type is blacklist
-        if policy_type == 'blacklist':
-            url = '/blacklist'
+        # If policy type is blocklist
+        if policy_type == 'blocklist':
+            url = '/blocklist'
             req_method = "post"
 
         # If policy type is baseline
@@ -432,7 +432,7 @@ class AirlockDigitalConnector(BaseConnector):
             req_method = "post"
 
         else:
-            return action_result.set_status(phantom.APP_ERROR, "Invalid policy type, must be either application, baseline, group or blacklist")
+            return action_result.set_status(phantom.APP_ERROR, "Invalid policy type, must be either application, baseline, group or blocklist")
 
         # Make the request
         self.save_progress("Making request to URL: {} with request type of {}.".format(url, policy_type))
@@ -453,20 +453,20 @@ class AirlockDigitalConnector(BaseConnector):
             for i in response['response']['baselines']:
                 self.save_progress("Request Format {}".format(i))
                 resp_arr.append({"policy_name": i['name'], "policy_id": i['baselineid'], "policy_type": "baseline"})
-        # Modify Blacklist Request to fit in columns
-        if policy_type == 'blacklist':
-            self.save_progress("Blacklist request {}.".format(response))
-            for i in response['response']['blacklists']:
+        # Modify blocklist Request to fit in columns
+        if policy_type == 'blocklist':
+            self.save_progress("blocklist request {}.".format(response))
+            for i in response['response']['blocklists']:
                 self.save_progress("Request Format {}".format(i))
-                resp_arr.append({"policy_name": i['name'], "policy_id": i['blacklistid'], "policy_type": "blacklist"})
+                resp_arr.append({"policy_name": i['name'], "policy_id": i['blocklistid'], "policy_type": "blocklist"})
 
         if policy_type == 'group':
-            if len(response['response']['blacklists']) > 0:
-                self.save_progress("Blacklists are assigned to this group {}.".format(response['response']))
-                for i in response['response']['blacklists']:
-                    resp_arr.append({"policy_name": i['name'], "policy_id": i['baselineid'], "policy_type": "blacklists"})
+            if len(response['response']['blocklists']) > 0:
+                self.save_progress("blocklists are assigned to this group {}.".format(response['response']))
+                for i in response['response']['blocklists']:
+                    resp_arr.append({"policy_name": i['name'], "policy_id": i['baselineid'], "policy_type": "blocklists"})
             if len(response['response']['baselines']) > 0:
-                self.save_progress("Blacklists are assigned to this group {}.".format(response['response']))
+                self.save_progress("blocklists are assigned to this group {}.".format(response['response']))
                 for i in response['response']['baselines']:
                     resp_arr.append({"policy_name": i['name'], "policy_id": i['baselineid'], "policy_type": "baselines"})
 
@@ -639,21 +639,14 @@ class AirlockDigitalConnector(BaseConnector):
 
         # make rest call
         # If more than one parameter is set
-        if len(param_var.keys()) > 1:
+        if len(param_var.keys()) >= 1:
             if param_var["hostname"] != "all":
                 self.save_progress("Requested parameters: {}".format(param_var))
-                self.save_progress("More than one parameter specified and all not used")
                 ret_val, response = self._make_rest_call('/agent/find', action_result, json=param_var, headers=header_var, method="post")
             else:
                 param_var.pop('hostname')
                 self.save_progress("Requested parameters: {}".format(param_var))
-                self.save_progress("Requesting a specific hostname that is not all")
-                ret_val, response = self._make_rest_call('/agent/find', action_result, json=param_var, headers=header_var, method="post")
-
-        # If only the all parameter set
-        elif len(param_var.keys()) == 1:
-                self.save_progress("Requested parameters: {}".format(param_var))
-                self.save_progress("All agents requested")
+                self.save_progress("All has been specified in hostname, so returning all hosts")
                 ret_val, response = self._make_rest_call('/agent/find', action_result, headers=header_var, method="post")
 
         if (phantom.is_fail(ret_val)):
@@ -665,7 +658,6 @@ class AirlockDigitalConnector(BaseConnector):
         # Now post process the data,  uncomment code as you deem fit
 
         # Add the response into the data section
-        action_result.add_data(response)
         action_result.add_data(response['response']['agents'])
         # Add a dictionary that is made up of the most important values from data into the summary
         summary = action_result.update_summary({})
