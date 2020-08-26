@@ -180,120 +180,129 @@ class AirlockDigitalConnector(BaseConnector):
         # use self.save_progress(...) to send progress messages back to the platform
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
 
+        # Optional values use get parameter
+        blocklistid = param.get('blocklistid', '')
+
         # Add an action result object to self (BaseConnector) to represent the action for this param
         action_result = self.add_action_result(ActionResult(dict(param)))
 
-        # Create empty array for urls to request that are a dictionary.
+        # Empty arrays
         url_req = []
-        # Retrieve file hash parameter
-        json_body = {"hashes": [param['hash']]}
 
-        self.save_progress("File hash var: {}".format(json_body['hashes']))
-        # Retrieve policy ID parameter
-        policy_id = param['policy_id']
-        # Retrieve Policy Type
-        policy_type = param['policy_type']
-
-        # Return and response array for multiple requests
-        # ret_val_arr = []
-        response_arr = []
-
-        # Empty counter for errors plus error message group
-        error_counter = 0
-        error_list = []
-
+        self.save_progress("File hash var: {}".format(param['hash']))
         # Add config to init variable to get root API Key
         config = self.get_config()
 
         # Place api key in its own variable.
         api_key = config.get('apiKey')
 
-        # Begin single selection policy changes
-        # If policy type is blocklist
-        if (policy_type == 'blocklist'):
-            # If removing from all blocklists
-            if policy_id == "all":
-                url = '/hash/blocklist/remove/all'
-                # Parameter Dictionary to pass to the request
-                header_var = {
-                    "X-APIKey": api_key,
-                }
-                # Append the url and the header to the url_req array
-                url_req = {'url': url, 'header_var': header_var, 'request_type': 'blocklist'}
-                self.save_progress("Making change to URL: {} with request type of {}.".format(url_req['url'], url_req['request_type']))
-                ret_val, response = self._make_rest_call(url_req['url'], action_result, json=json_body, headers=url_req['header_var'], method="post")
+        # Parameter Dictionary to pass to the request
+        header_var = {
+            "X-APIKey": api_key
+        }
 
-            # If removing from only one blocklist
-            else:
-                url = '/hash/blocklist/remove'
-                # Parameter Dictionary to pass to the request
-                header_var = {
-                    "X-APIKey": api_key,
-                }
-                json_body['blocklistid'] = policy_id
-                # Append the url and the header to the url_req array
-                url_req.append({'url': url, 'header_var': header_var, 'request_type': 'blocklist'})
-                self.save_progress("Making change to URL: {} with request type of {}.".format(url_req['url'], url_req['request_type']))
-                ret_val, response = self._make_rest_call(url_req['url'], action_result, json=json_body, headers=url_req['header_var'], method="post")
+        if (blocklistid == "" or None):
+            self.save_progress("No blocklistid was specified, removing hash(es) from all blocklist packages")
+            url = '/hash/blocklist/remove/all'
+            request_json = {
+                "hashes": [param['hash']]
+            }
+        else:
+            self.save_progress("Removing hash(es) from specified blocklist packages")
+            url = '/hash/blocklist/remove'
+            request_json = {
+                "hashes": [param['hash']],
+                "blocklistid": blocklistid
+            }
 
-        # If policy type is application
-        if (policy_type == 'application'):
-            # If removing from all applications
-            if policy_id == "all":
-                # Append Header
-                url = '/hash/application/add'
-                header_var = {
-                    "X-APIKey": api_key,
-                }
-                ret_val, response = self._make_rest_call('/application', action_result, headers=header_var, method="post")
+        # Parameter Dictionary to pass to the request
+        header_var = {
+           "X-APIKey": api_key
+        }
+        url_req.append({'url': url, 'header_var': header_var, 'request_type': 'blocklist'})
 
-                # For each application id in
-                for i in range(0, len(response['response']['applications'])):
-                    # Extract the Application ID from the JSON Response
-                    application_id = response['response']['applications'][i]['applicationid']
+        # Make the request
+        ret_val, response = self._make_rest_call(url, action_result, json=request_json, headers=header_var, method="post")
 
-                    # Add the application id to the body of the request
-                    json_body['applicationid'] = application_id
-
-                    # Create a dictionary with the variables we will use for the request
-                    url_req.append({'url': url, 'header_var': header_var, 'request_type': 'blocklist'})
-
-                    # Post a mesage to phantom console
-                    self.save_progress("Making change to URL: {} with request type of {}.".format(url_req['url'], url_req['request_type']))
-                    # Make the call to add the hash to the application
-                    ret_val, response = self._make_rest_call(url_req['url'], action_result, json=json_body, headers=url_req['header_var'], method="post")
-                    response_arr.append(response)
-
-            # If removing from only one application list
-            else:
-                url = '/hash/application/add'
-                # Parameter Dictionary to pass to the request
-                header_var = {
-                    "X-APIKey": api_key,
-                }
-                json_body['applicationid'] = policy_id
-                # Append the url and the header to the url_req array
-                url_req.append({'url': url, 'header_var': header_var, 'request_type': 'application'})
-
-        # If the http request fails
         if (phantom.is_fail(ret_val)):
-            return action_result.set_status(phantom.APP_ERROR, "Failed to unblock hash for Airlock Digital.  Error Message {}".format(response['error']))
-
-        if error_counter > 0:
-            return action_result.set_status(phantom.APP_ERROR, "Failed to unblock hash for Airlock Digital.  Error Message {}".format(' , '.join(error_list)))
+            return action_result.set_status(phantom.APP_ERROR, "Failed to unblock hash, perhaps the specified blocklistid does not exist")
 
         # Now post process the data,  uncomment code as you deem fit
         # Add the response into the data section
-        if response_arr > 0:
-            action_result.add_data(response_arr)
-        else:
-            action_result.add_data(response)
+        action_result.add_data(response)
 
         # Add a dictionary that is made up of the most important values from data into the summary
         summary = action_result.update_summary({})
-        summary['hash'] = json_body['hashes']
+        summary['hash'] = request_json['hashes']
         # Return the first response outcome
-        summary['result'] = response[0]['error']
+        summary['result'] = response['error']
+
+        # Return success, no need to set the message, only the status
+        # BaseConnector will create a textual message based off of the summary dictionary
+        return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _handle_disallow_hash(self, param):
+
+        # Implement the handler here
+        # use self.save_progress(...) to send progress messages back to the platform
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+
+        # Optional values use get parameter
+        applicationid = param.get('applicationid', '')
+
+        # Add an action result object to self (BaseConnector) to represent the action for this param
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        # Empty arrays
+        url_req = []
+
+        self.save_progress("File hash var: {}".format(param['hash']))
+        # Add config to init variable to get root API Key
+        config = self.get_config()
+
+        # Place api key in its own variable.
+        api_key = config.get('apiKey')
+
+        # Parameter Dictionary to pass to the request
+        header_var = {
+            "X-APIKey": api_key
+        }
+
+        if (applicationid == "" or None):
+            self.save_progress("No applicationid was specified, removing hash(es) from all application capture packages")
+            url = '/hash/application/remove/all'
+            request_json = {
+                "hashes": [param['hash']]
+            }
+        else:
+            self.save_progress("Removing hash(es) from specified application capture packages")
+            url = '/hash/application/remove'
+            request_json = {
+                "hashes": [param['hash']],
+                "applicationid": applicationid
+            }
+
+        # Parameter Dictionary to pass to the request
+        header_var = {
+           "X-APIKey": api_key
+        }
+        url_req.append({'url': url, 'header_var': header_var, 'request_type': 'application'})
+
+        # Make the request
+        ret_val, response = self._make_rest_call(url, action_result, json=request_json, headers=header_var, method="post")
+
+        if (phantom.is_fail(ret_val)):
+            return action_result.set_status(phantom.APP_ERROR, "Failed to unblock hash, perhaps the specified applicationid does not exist")
+
+        # Now post process the data,  uncomment code as you deem fit
+        # Add the response into the data section
+        action_result.add_data(response)
+
+        # Add a dictionary that is made up of the most important values from data into the summary
+        summary = action_result.update_summary({})
+        summary['hash'] = request_json['hashes']
+        # Return the first response outcome
+        summary['result'] = response['error']
 
         # Return success, no need to set the message, only the status
         # BaseConnector will create a textual message based off of the summary dictionary
@@ -310,8 +319,6 @@ class AirlockDigitalConnector(BaseConnector):
 
         # Empty arrays
         url_req = []
-        # Access action parameters passed in the 'param' dictionary
-        policy_type = param['policy_type']
 
         self.save_progress("File hash var: {}".format(param['hash']))
         # Add config to init variable to get root API Key
@@ -325,53 +332,24 @@ class AirlockDigitalConnector(BaseConnector):
             "X-APIKey": api_key
         }
 
-        # If policy type is blocklist
-        if (policy_type == 'blocklist'):
-            url = '/hash/blocklist/add'
-            # Required values can be accessed directly
-            request_json = {
-                "hashes": [param['hash']],
-                "blocklistid": param['blocklistid']
-            }
-            # Parameter Dictionary to pass to the request
-            header_var = {
-                "X-APIKey": api_key
-            }
-            url_req.append({'url': url, 'header_var': header_var, 'request_type': 'blocklist'})
+        url = '/hash/blocklist/add'
+        # Required values can be accessed directly
+        request_json = {
+            "hashes": [param['hash']],
+            "blocklistid": param['blocklistid']
+        }
+        # Parameter Dictionary to pass to the request
+        header_var = {
+           "X-APIKey": api_key
+        }
+        url_req.append({'url': url, 'header_var': header_var, 'request_type': 'blocklist'})
 
-        # If policy type is application
-        if (policy_type == 'application'):
-            url = '/hash/application/remove'
-            # Parameter Dictionary to pass to the request
-            request_json = {
-                "hashes": [param['hash']],
-                "blocklistid": param['blocklistid']
-            }
-            header_var = {
-                "X-APIKey": api_key
-            }
-            url_req.append({'url': url, 'header_var': header_var, 'request_type': 'application'})
+        # Make the request for each
+        self.save_progress("Sending hash value to /hash/blocklist/add")
+        ret_val, response = self._make_rest_call(url, action_result, json=request_json, headers=header_var, method="post")
 
-        # If policy type is baseline
-        if (policy_type == 'baseline'):
-            url = '/hash/baseline/remove'
-            request_json = {
-                "hashes": [param['hash']],
-                "blocklistid": param['blocklistid']
-            }
-            # Parameter Dictionary to pass to the request
-            header_var = {
-                "X-APIKey": api_key
-            }
-            url_req.append({'url': url, 'header_var': header_var, 'request_type': 'baseline'})
-
-        # make rest call that iterates over each url
-        for request in url_req:
-            # Make the request for each
-            self.save_progress("Making change to URL: {} with request type of {}.".format(request['url'], request['request_type']))
-            ret_val, response = self._make_rest_call(request['url'], action_result, json=request_json, headers=request['header_var'], method="post")
-            if (phantom.is_fail(ret_val)):
-                return action_result.set_status(phantom.APP_ERROR, "Failed to block hash")
+        if (phantom.is_fail(ret_val)):
+            return action_result.set_status(phantom.APP_ERROR, "Failed to block hash")
 
         # Now post process the data,  uncomment code as you deem fit
         # Add the response into the data section
@@ -387,7 +365,82 @@ class AirlockDigitalConnector(BaseConnector):
         # BaseConnector will create a textual message based off of the summary dictionary
         return action_result.set_status(phantom.APP_SUCCESS)
 
-    def _handle_list_policies(self, param):
+    def _handle_allow_hash(self, param):
+
+        # Implement the handler here
+        # use self.save_progress(...) to send progress messages back to the platform
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+
+        # Add an action result object to self (BaseConnector) to represent the action for this param
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        # Empty arrays
+        url_req = []
+
+        self.save_progress("File hash var: {}".format(param['hash']))
+        # Add config to init variable to get root API Key
+        config = self.get_config()
+
+        # Place api key in its own variable.
+        api_key = config.get('apiKey')
+
+        # Parameter Dictionary to pass to the request
+        header_var = {
+            "X-APIKey": api_key
+        }
+
+        # We first need to populate the hash value into the airlock file repository, so it can be added into an appcap
+        url = '/hash/add'
+
+        # Required values can be accessed directly
+        request_json = {
+           "hashes": [{"path": param['path'], "sha256": param['hash']}]
+        }
+        # Parameter Dictionary to pass to the request
+        header_var = {
+           "X-APIKey": api_key
+        }
+
+        url_req.append({'url': url, 'header_var': header_var, 'request_type': 'application'})
+
+        # Make the request to populate the application capture
+        self.save_progress("Populating the Airlock repository with the specified hash value and path")
+        ret_val, response = self._make_rest_call(url, action_result, json=request_json, headers=header_var, method="post")
+
+        url2 = '/hash/application/add'
+        # Required values can be accessed directly
+        request_json = {
+            "hashes": [param['hash']],
+            "applicationid": param['applicationid']
+        }
+        # Parameter Dictionary to pass to the request
+        header_var = {
+           "X-APIKey": api_key
+        }
+        url_req.append({'url': url2, 'header_var': header_var, 'request_type': 'application'})
+
+        # Now put the added hash value from the repo into the application capture
+        self.save_progress("Linking the new repository entry with the specified Application Capture")
+        ret_val, response = self._make_rest_call(url2, action_result, json=request_json, headers=header_var, method="post")
+
+        if (phantom.is_fail(ret_val)):
+            return action_result.set_status(phantom.APP_ERROR, "Failed to add hash to application capture")
+
+        # Now post process the data,  uncomment code as you deem fit
+        # Add the response into the data section
+        action_result.add_data(response)
+
+        # Add a dictionary that is made up of the most important values from data into the summary
+        summary = action_result.update_summary({})
+        summary['hash'] = request_json['hashes']
+        # Return the first response outcome
+        summary['result'] = response['error']
+
+        # Return success, no need to set the message, only the status
+        # BaseConnector will create a textual message based off of the summary dictionary
+        return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _handle_list_identifiers(self, param):
 
         # Implement the handler here
         # use self.save_progress(...) to send progress messages back to the platform
@@ -404,9 +457,6 @@ class AirlockDigitalConnector(BaseConnector):
 
         # Response array
         resp_arr = []
-
-        # Get policy id for group
-        group_id = param.get('policy_id', '')
 
         # Place api key in its own variable.
         api_key = config.get('apiKey')
@@ -426,9 +476,14 @@ class AirlockDigitalConnector(BaseConnector):
             url = '/baseline'
             req_method = "post"
 
-        # If policy type is baseline
-        elif policy_type == 'group':
-            url = '/group/policies'
+        # If policy type is application
+        elif (policy_type == 'application'):
+            url = '/application'
+            req_method = "post"
+
+        # If policy type is group
+        elif (policy_type == 'group'):
+            url = '/group'
             req_method = "post"
 
         else:
@@ -436,39 +491,32 @@ class AirlockDigitalConnector(BaseConnector):
 
         # Make the request
         self.save_progress("Making request to URL: {} with request type of {}.".format(url, policy_type))
-
-        if policy_type == 'group':
-            json_body = {"groupid": group_id}
-            ret_val, response = self._make_rest_call(url, action_result, headers=header_var, json=json_body, method=req_method)
-
-        # Make get request without any json body
-        else:
-            ret_val, response = self._make_rest_call(url, action_result, headers=header_var, method=req_method)
+        ret_val, response = self._make_rest_call(url, action_result, headers=header_var, method=req_method)
 
         if (phantom.is_fail(ret_val)):
-            return action_result.set_status(phantom.APP_ERROR, "Failed to request policy group.  Error message: {}".format(response['error']))
+            return action_result.set_status(phantom.APP_ERROR, "Request Failed.  Error message: {}".format(response['error']))
 
         # Modify Baseline Requests to fit in the columns
         if policy_type == 'baseline':
             for i in response['response']['baselines']:
                 self.save_progress("Request Format {}".format(i))
-                resp_arr.append({"policy_name": i['name'], "policy_id": i['baselineid'], "policy_type": "baseline"})
+                resp_arr.append({"name": i['name'], "id": i['baselineid'], "type": "baseline"})
         # Modify blocklist Request to fit in columns
         if policy_type == 'blocklist':
             self.save_progress("blocklist request {}.".format(response))
             for i in response['response']['blocklists']:
                 self.save_progress("Request Format {}".format(i))
-                resp_arr.append({"policy_name": i['name'], "policy_id": i['blocklistid'], "policy_type": "blocklist"})
-
+                resp_arr.append({"name": i['name'], "id": i['blocklistid'], "type": "blocklist"})
+        # Modify application Request to fit in columns
+        if policy_type == 'application':
+            for i in response['response']['applications']:
+                self.save_progress("Request Format {}".format(i))
+                resp_arr.append({"name": i['name'], "id": i['applicationid'], "type": "application"})
+        # Modify group Request to fit in columns
         if policy_type == 'group':
-            if len(response['response']['blocklists']) > 0:
-                self.save_progress("blocklists are assigned to this group {}.".format(response['response']))
-                for i in response['response']['blocklists']:
-                    resp_arr.append({"policy_name": i['name'], "policy_id": i['baselineid'], "policy_type": "blocklists"})
-            if len(response['response']['baselines']) > 0:
-                self.save_progress("blocklists are assigned to this group {}.".format(response['response']))
-                for i in response['response']['baselines']:
-                    resp_arr.append({"policy_name": i['name'], "policy_id": i['baselineid'], "policy_type": "baselines"})
+            for i in response['response']['groups']:
+                self.save_progress("Request Format {}".format(i))
+                resp_arr.append({"name": i['name'], "id": i['groupid'], "parent": i['parent'], "type": "group"})
 
         # Now post process the data,  uncomment code as you deem fit
         # Add the response into the data section
@@ -486,7 +534,7 @@ class AirlockDigitalConnector(BaseConnector):
 
         # return action_result.set_status(phantom.APP_ERROR, "Action not yet implemented")
 
-    def _handle_list_groups(self, param):
+    def _handle_list_policy(self, param):
 
         # Implement the handler here
         # use self.save_progress(...) to send progress messages back to the platform
@@ -494,6 +542,9 @@ class AirlockDigitalConnector(BaseConnector):
 
         # Add an action result object to self (BaseConnector) to represent the action for this param
         action_result = self.add_action_result(ActionResult(dict(param)))
+
+        # Access action parameters passed in the 'param' dictionary
+        group_id = param['group_id']
 
         # Add config to init variable to get root API Key
         config = self.get_config()
@@ -507,12 +558,15 @@ class AirlockDigitalConnector(BaseConnector):
         }
 
         # URL Group Request
-        url = '/group'
+        url = '/group/policies'
+
+        # Put the group ID to request in the JSON blody
+        json_body = {"groupid": group_id}
 
         # make rest call that iterates over each url
         # Make the request for each
         self.save_progress("Making request to URL: {}".format(url))
-        ret_val, response = self._make_rest_call(url, action_result, headers=header_var, method="post")
+        ret_val, response = self._make_rest_call(url, action_result, json=json_body, headers=header_var, method="post")
 
         if (phantom.is_fail(ret_val)):
             return action_result.set_status(phantom.APP_ERROR, "Failed to request group list ")
@@ -679,7 +733,7 @@ class AirlockDigitalConnector(BaseConnector):
         # Access action parameters passed in the 'param' dictionary
 
         # Required values can be accessed directly
-        otpcode = param['otpcode']
+        otpid = param['otpid']
 
         # Add config to init variable to get root API Key
         config = self.get_config()
@@ -692,7 +746,7 @@ class AirlockDigitalConnector(BaseConnector):
             "X-APIKey": api_key,
         }
         param_var = {
-            "otpid": otpcode
+            "otpid": otpid
         }
 
         # Optional values should use the .get() function
@@ -848,6 +902,12 @@ class AirlockDigitalConnector(BaseConnector):
         elif action_id == 'unblock_hash':
             ret_val = self._handle_unblock_hash(param)
 
+        elif action_id == 'disallow_hash':
+            ret_val = self._handle_disallow_hash(param)
+
+        elif action_id == 'allow_hash':
+            ret_val = self._handle_allow_hash(param)
+
         elif action_id == 'block_hash':
             ret_val = self._handle_block_hash(param)
 
@@ -857,11 +917,11 @@ class AirlockDigitalConnector(BaseConnector):
         elif action_id == 'move_endpoints':
             ret_val = self._handle_move_endpoints(param)
 
-        elif action_id == 'list_policies':
-            ret_val = self._handle_list_policies(param)
+        elif action_id == 'list_identifiers':
+            ret_val = self._handle_list_identifiers(param)
 
-        elif action_id == 'list_groups':
-            ret_val = self._handle_list_groups(param)
+        elif action_id == 'list_policy':
+            ret_val = self._handle_list_policy(param)
 
         elif action_id == 'otp_revoke':
             ret_val = self._handle_otp_revoke(param)

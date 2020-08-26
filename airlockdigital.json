@@ -1,15 +1,15 @@
 {
     "appid": "b29ae591-b692-4435-98e9-b0619e2e2476",
     "name": "Airlock Digital",
-    "description": "This app integrates your system with Airlock Digitals Endpoints",
+    "description": "This app integrates Splunk Phantom with Airlock Digital's REST API Endpoints",
     "type": "endpoint",
     "product_vendor": "Airlock",
     "logo": "airlockdigital.svg",
     "logo_dark": "airlockdigital_dark.svg",
     "product_name": "Airlock Digital",
-    "product_version_regex": ".*",
-    "publisher": "Domenico Perre",
-    "license": "Copyright (c) Domenico Perre, 2019",
+    "product_version_regex": "v4.6+",
+    "publisher": "Domenico Perre & Airlock Digital Pty Ltd",
+    "license": "Copyright (c) Domenico Perre & Airlock Digital Pty Ltd, 2020",
     "app_version": "1.0.0",
     "utctime_updated": "2019-07-23T02:14:08.025498Z",
     "package_name": "phantom_airlockdigital",
@@ -49,44 +49,30 @@
         {
             "action": "unblock hash",
             "identifier": "unblock_hash",
-            "description": "Unblock the hash",
+            "description": "Unblock (remove) hashes from one or more Blocklist policies",
             "verbose": "",
             "type": "correct",
             "read_only": false,
             "parameters": {
                 "hash": {
-                    "description": "Hash of file to block",
+                    "description": "Hash of file(s) to unblock",
                     "data_type": "string",
                     "required": true,
                     "primary": true,
                     "contains": [
-                        "md5",
-                        "sha1",
-                        "sha256",
-                        "hash"
+                        "sha256"
                     ],
                     "value_list": [],
                     "default": "",
                     "order": 0
                 },
-                "policy_type": {
-                    "description": "Policy Type",
+                "blocklistid": {
+                    "description": "Remove hash(es) from a specific blocklist by specifying the id, or leave this black to remove it from all blocklists",
                     "data_type": "string",
-                    "required": true,
+                    "required": false,
                     "primary": false,
-                    "contains": [],
-                    "value_list": ["application", "baseline", "blocklist"],
-                    "default": "blocklist",
-                    "order": 1
-                },
-                "policy_id": {
-                    "description": "Policy ID, either the specific blocklist id, application id, baseline id or 'all' for removing the hash from all lists of the selected policy type",
-                    "data_type": "string",
-                    "required": true,
-                    "primary": false,
-                    "contains": ["airlock policyid"],
                     "value_list": [],
-                    "default": "all",
+                    "default": "",
                     "order": 1
                 }
             },
@@ -95,29 +81,28 @@
                     "data_path": "action_result.parameter.hash",
                     "data_type": "string",
                     "contains": [
-                        "md5",
-                        "sha1",
-                        "sha256",
-                        "hash"
+                        "sha256"
                     ],
                     "column_name": "hash",
-                    "column_order": 0
+                    "column_order": 0,
+					"example_values": [
+                        "f0eb87677a689a88b58a0613dfd7252fb850393c"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.*.error",
                     "data_type": "string",
-                    "contains": [
-                    ],
                     "column_name": "response",
                     "column_order": 1
                 },
-
                 {
-                    "data_path": "action_result.parameter.policy_id",
+                    "data_path": "action_result.parameter.blocklistid",
                     "data_type": "string",
-                    "contains": ["airlock policyid"],
-                    "column_name": "policy_id",
-                    "column_order": 2
+                    "column_name": "blocklistid",
+                    "column_order": 2,
+					"example_values": [
+                        "1567080520"
+                    ]					
                 },
                 {
                     "data_path": "action_result.status",
@@ -148,58 +133,141 @@
             "versions": "EQ(*)"
         },
         {
-            "action": "list policies",
-            "identifier": "list_policies",
-            "description": "Gathers a list of policies related to an application, baseline or blocklist",
+            "action": "disallow hash",
+            "identifier": "disallow_hash",
+            "description": "Disallow (remove) hashes from one or more Application Captures",
             "verbose": "",
             "type": "correct",
-            "read_only": true,
+            "read_only": false,
             "parameters": {
-                "policy_type": {
-                    "description": "The policy type, can be application, baseline or blocklist",
+                "hash": {
+                    "description": "Hash of file(s) to disallow",
                     "data_type": "string",
                     "required": true,
                     "primary": true,
-                    "contains": [],
-                    "value_list": ["baseline", "blocklist", "group"],
+                    "contains": [
+                        "sha256"
+                    ],
+                    "value_list": [],
                     "default": "",
                     "order": 0
                 },
-                "policy_id": {
-                    "description": "The policy id, only applicable when policy type is group",
+                "applicationid": {
+                    "description": "Remove hash(es) from a specific Application Capture by specifying the id, or leave this black to remove it from all Application Captures",
                     "data_type": "string",
                     "required": false,
                     "primary": false,
-                    "contains": ["airlock policyid"],
                     "value_list": [],
                     "default": "",
                     "order": 1
                 }
-
             },
             "output": [
                 {
-                    "data_path": "action_result.data.*.*.policy_type",
+                    "data_path": "action_result.parameter.hash",
+                    "data_type": "string",
+                    "contains": [
+                        "sha256"
+                    ],
+                    "column_name": "hash",
+                    "column_order": 0,
+					"example_values": [
+                        "f0eb87677a689a88b58a0613dfd7252fb850393c"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.*.error",
+                    "data_type": "string",
+                    "column_name": "response",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.parameter.applicationid",
+                    "data_type": "string",
+                    "column_name": "applicationid",
+                    "column_order": 2,
+					"example_values": [
+                        "154419029"
+                    ]					
+                },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "column_name": "status",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },		
+        {
+            "action": "list identifiers",
+            "identifier": "list_identifiers",
+            "description": "Gathers a list of identifiers which are required for referencing groups, applications, baselines or blocklists in other actions",
+            "verbose": "",
+            "type": "information",
+            "read_only": true,
+            "parameters": {
+                "policy_type": {
+                    "description": "The type can be group, application, baseline or blocklist",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": [],
+                    "value_list": ["application", "baseline", "blocklist", "group"],
+                    "default": "",
+                    "order": 0
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.data.*.*.type",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "Policy Type",
+                    "column_name": "Type",
                     "column_order": 0
                 },
                 {
-                    "data_path": "action_result.data.*.*.policy_name",
+                    "data_path": "action_result.data.*.*.name",
                     "data_type": "string",
                     "contains": [
                     ],
-                    "column_name": "Policy Name",
+                    "column_name": "Name",
                     "column_order": 2
                 },
                 {
-                    "data_path": "action_result.data.*.*.policy_id",
+                    "data_path": "action_result.data.*.*.id",
                     "data_type": "string",
-                    "contains": ["airlock policyid"],
-                    "column_name": "Policy ID",
+                    "contains": [],
+                    "column_name": "ID",
                     "column_order": 3
                 },
+				{
+                    "data_path": "action_result.data.*.*.parent",
+                    "data_type": "string",
+                    "contains": [
+                    ],
+                    "column_name": "Parent Group",
+                    "column_order": 4
+                },				
                 {
                     "data_path": "action_result.status",
                     "data_type": "string",
@@ -207,6 +275,13 @@
                     "column_order": 5
                 },
                 {
+                    "data_path": "action_result.parameter.policy_type",
+                    "contains": [],					
+                    "data_type": "string",
+                    "column_name": "status",
+                    "column_order": 6
+                },				
+                {
                     "data_path": "action_result.summary",
                     "data_type": "string"
                 },
@@ -229,41 +304,321 @@
             "versions": "EQ(*)"
         },
         {
-            "action": "list groups",
-            "identifier": "list_groups",
-            "description": "Gathers a list of groups",
+            "action": "list policy",
+            "identifier": "list_policy",
+            "description": "List the policy configuration of a specified group",
             "verbose": "",
             "type": "correct",
             "read_only": true,
             "parameters": {
-
+			    "group_id": {
+                    "description": "The group id of the group you want to retrieve policy configuration from",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": [],
+                    "value_list": [],
+                    "default": "",
+                    "order": 0
+                }
             },
             "output": [
                 {
-                    "data_path": "action_result.data.*.response.groups.*.name",
+                    "data_path": "action_result.data.*.response.groupid",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "Policy Name",
+                    "column_name": "Group ID",
                     "column_order": 0
                 },
                 {
-                    "data_path": "action_result.data.*.response.groups.*.parent",
+                    "data_path": "action_result.data.*.response.name",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "Policy Parent",
-                    "column_order": 0
+                    "column_name": "Group Name",
+                    "column_order": 1
                 },
                 {
-                    "data_path": "action_result.data.*.response.groups.*.groupid",
+                    "data_path": "action_result.data.*.response.policyver",
                     "data_type": "string",
-                    "contains": ["airlock policyid"],
-                    "column_name": "Policy ID",
-                    "column_order": 0
+                    "contains": [],
+                    "column_name": "Policy Version",
+                    "column_order": 2
                 },
+                {
+                    "data_path": "action_result.data.*.response.parent",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "Parent Group",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.data.*.response.hashsb_ver",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "Hash DB Version",
+                    "column_order": 4
+                },
+                {
+                    "data_path": "action_result.data.*.response.agentstopcode",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "Agent Stop Code",
+                    "column_order": 5
+                },
+                {
+                    "data_path": "action_result.data.*.response.auditmode",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "Audit Mode",
+                    "column_order": 6
+                },
+                {
+                    "data_path": "action_result.data.*.response.enable_notifications",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "Enable Notifications",
+                    "column_order": 7
+                },
+                {
+                    "data_path": "action_result.data.*.response.notification_message",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "Notification Message",
+                    "column_order": 8
+                },
+                {
+                    "data_path": "action_result.data.*.response.poll_time",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "Poll Time",
+                    "column_order": 9
+                },
+                {
+                    "data_path": "action_result.data.*.response.trusted_upload",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "Trusted Upload",
+                    "column_order": 10
+                },
+                {
+                    "data_path": "action_result.data.*.response.pslockdown",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "PowerShell Language Mode",
+                    "column_order": 11
+                },
+                {
+                    "data_path": "action_result.data.*.response.script_enabled",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "Script Control Enabled",
+                    "column_order": 12
+                },
+                {
+                    "data_path": "action_result.data.*.response.batch",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "Batch Scripts",
+                    "column_order": 13
+                },
+                {
+                    "data_path": "action_result.data.*.response.powershell",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "Powershell Scripts",
+                    "column_order": 14
+                },
+                {
+                    "data_path": "action_result.data.*.response.command",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "Command Scripts",
+                    "column_order": 15
+                },
+                {
+                    "data_path": "action_result.data.*.response.vbscript",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "VB Scripts",
+                    "column_order": 16
+                },
+                {
+                    "data_path": "action_result.data.*.response.javascript",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "Javascript",
+                    "column_order": 17
+                },
+                {
+                    "data_path": "action_result.data.*.response.windowsinstaller",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "Windows Installer Scripts",
+                    "column_order": 18
+                },
+                {
+                    "data_path": "action_result.data.*.response.htmlapplication",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "HTML Application Scripts",
+                    "column_order": 19
+                },
+                {
+                    "data_path": "action_result.data.*.response.javaapplication",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "Java Application Scripts",
+                    "column_order": 20
+                },
+                {
+                    "data_path": "action_result.data.*.response.windowsscriptcomponent",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "Windows Script Component Scripts",
+                    "column_order": 21
+                },
+                {
+                    "data_path": "action_result.data.*.response.python",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "Python Scripts",
+                    "column_order": 22
+                },
+                {
+                    "data_path": "action_result.data.*.response.proxyenabled",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "Proxy Enabled",
+                    "column_order": 23
+                },
+                {
+                    "data_path": "action_result.data.*.response.proxyserver",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "Proxy Server",
+                    "column_order": 24
+                },
+                {
+                    "data_path": "action_result.data.*.response.proxyport",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "Proxy Port",
+                    "column_order": 25
+                },
+                {
+                    "data_path": "action_result.data.*.response.proxyauth",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "Proxy Authentication",
+                    "column_order": 26
+                },
+                {
+                    "data_path": "action_result.data.*.response.proxyuser",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "Proxy Username",
+                    "column_order": 27
+                },
+                {
+                    "data_path": "action_result.data.*.response.proxypass",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "Proxy Password",
+                    "column_order": 28
+                },
+                {
+                    "data_path": "action_result.data.*.response.applications.*.applicationid",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "Application Capture ID",
+                    "column_order": 29
+                },	
+                {
+                    "data_path": "action_result.data.*.response.applications.*.name",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "Application Capture Name",
+                    "column_order": 30
+                },
+                {
+                    "data_path": "action_result.data.*.response.baselines.*.baselineid",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "Baseline ID",
+                    "column_order": 31
+                },
+                {
+                    "data_path": "action_result.data.*.response.baselines.*.name",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "Baseline Name",
+                    "column_order": 32
+                },
+                {
+                    "data_path": "action_result.data.*.response.publishers.*.name",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "Publisher Name",
+                    "column_order": 33
+                },
+                {
+                    "data_path": "action_result.data.*.response.blocklists.*.blocklistid",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "Blocklist ID",
+                    "column_order": 34,
+					"example_values": [
+                        "1567080520"
+                    ]					
+                },	
+                {
+                    "data_path": "action_result.data.*.response.blocklists.*.name",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "Blocklist Name",
+                    "column_order": 35
+                },
+                {
+                    "data_path": "action_result.data.*.response.paths.*.name",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "Path Rule",
+                    "column_order": 36
+                },
+                {
+                    "data_path": "action_result.data.*.response.commlistid",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "Communication List ID",
+                    "column_order": 37
+                },
+                {
+                    "data_path": "action_result.data.*.response.commlist.*.name",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "Communication List Name",
+                    "column_order": 38
+                },
+                {
+                    "data_path": "action_result.data.*.response.commlist.*.ip",
+                    "data_type": "string",
+                    "contains": ["ip"],
+                    "column_name": "Communication List IP",
+                    "column_order": 39
+                },				
                 {
                     "data_path": "action_result.summary",
                     "data_type": "string"
                 },
+                {
+                    "data_path": "action_result.parameter.group_id",
+                    "contains": [],					
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string"
+                },				
                 {
                     "data_path": "action_result.message",
                     "data_type": "string"
@@ -276,6 +631,7 @@
                     "data_path": "summary.total_objects_successful",
                     "data_type": "numeric"
                 }
+				
             ],
             "render": {
                 "type": "table"
@@ -291,7 +647,7 @@
             "read_only": false,
             "parameters": {
                 "group_id": {
-                    "description": "Destination group id, can be found out by either list groups or list endpoints action",
+                    "description": "Destination group id, can be obtained from the list identifiers endpoint",
                     "data_type": "string",
                     "required": true,
                     "primary": true,
@@ -301,11 +657,11 @@
                     "order": 0
                 },
                 "agent_id": {
-                    "description": "The agent id.  Can be found out from looking at the list endpoints action",
+                    "description": "Agent id, can be obtained from the list endpoints action",
                     "data_type": "string",
                     "required": true,
                     "primary": false,
-                    "contains": ["airlock policyid"],
+                    "contains": [],
                     "value_list": [],
                     "default": "",
                     "order": 1
@@ -329,10 +685,24 @@
                 {
                     "data_path": "action_result.data.*.response.groups.*.groupid",
                     "data_type": "string",
-                    "contains": ["airlock policyid"],
+                    "contains": [],
                     "column_name": "Policy ID",
                     "column_order": 0
                 },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.agent_id",
+					"contains": [],
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.group_id",
+                    "contains": [],					
+                    "data_type": "string"
+                },				
                 {
                     "data_path": "action_result.summary",
                     "data_type": "string"
@@ -356,46 +726,137 @@
             "versions": "EQ(*)"
         },
         {
-            "action": "block hash",
-            "identifier": "block_hash",
-            "description": "Block a file hash",
+            "action": "allow hash",
+            "identifier": "allow_hash",
+            "description": "Allow (add) hashes in a Application Capture policy",
             "verbose": "",
             "type": "contain",
             "read_only": false,
             "parameters": {
                 "hash": {
-                    "description": "Hash of file to ban/block",
+                    "description": "Hash of file(s) to allow in an Application Capture",
                     "data_type": "string",
                     "required": true,
                     "primary": true,
                     "contains": [
-                        "md5",
-                        "sha1",
-                        "sha256",
-                        "hash"
+                        "sha256"
                     ],
                     "value_list": [],
                     "default": "",
                     "order": 0
                 },
-                "policy_id": {
-                    "description": "Policy ID",
-                    "data_type": "string",
-                    "required": true,
-                    "primary": false,
-                    "contains": ["airlock policyid"],
-                    "value_list": [],
-                    "default": "all",
-                    "order": 1
-                },
-                "policy_type": {
-                    "description": "Policy Type",
+                "applicationid": {
+                    "description": "Allow hash(es) in a specific Application Capture by specifying the id",
                     "data_type": "string",
                     "required": true,
                     "primary": false,
                     "contains": [],
-                    "value_list": ["all", "application", "baseline", "blocklist"],
-                    "default": "all",
+                    "value_list": [],
+                    "default": "",
+                    "order": 1
+                },
+                "path": {
+                    "description": "Specify a file path which represents the hash of the file you are adding. If you don't want to do this, use the default however this parameter is required for population of file repository entries in Airlock. Note that the path must be escaped.",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": false,
+                    "contains": ["file path"],
+                    "value_list": [],
+                    "default": "C:\\phantom\\hash.dll",
+                    "order": 2
+                }					
+            },
+            "output": [
+                {
+                    "data_path": "action_result.parameter.hash",
+                    "data_type": "string",
+                    "contains": [
+                        "sha256"
+                    ],
+                    "column_name": "hash",
+                    "column_order": 0,
+					"example_values": [
+                        "f0eb87677a689a88b58a0613dfd7252fb850393c"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.*.error",
+                    "data_type": "string",
+                    "contains": [
+                    ],
+                    "column_name": "response",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.parameter.applicationid",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "applicationid",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.parameter.path",
+                    "data_type": "string",
+                    "contains": ["file path"],
+                    "column_name": "path",
+                    "column_order": 2
+                },				
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "column_name": "status",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },		
+        {
+            "action": "block hash",
+            "identifier": "block_hash",
+            "description": "Block (add) hashes in a Blocklist policy",
+            "verbose": "",
+            "type": "contain",
+            "read_only": false,
+            "parameters": {
+                "hash": {
+                    "description": "Hash of file(s) to ban/block",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": [
+                        "sha256"
+                    ],
+                    "value_list": [],
+                    "default": "",
+                    "order": 0
+                },
+                "blocklistid": {
+                    "description": "Blocklist ID",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": false,
+                    "contains": [],
+                    "value_list": [],
+                    "default": "",
                     "order": 1
                 }
             },
@@ -404,13 +865,13 @@
                     "data_path": "action_result.parameter.hash",
                     "data_type": "string",
                     "contains": [
-                        "md5",
-                        "sha1",
-                        "sha256",
-                        "hash"
+                        "sha256"
                     ],
                     "column_name": "hash",
-                    "column_order": 0
+                    "column_order": 0,
+					"example_values": [
+                        "f0eb87677a689a88b58a0613dfd7252fb850393c"
+                    ]	
                 },
                 {
                     "data_path": "action_result.data.*.*.error",
@@ -425,7 +886,10 @@
                     "data_type": "string",
                     "contains": [],
                     "column_name": "blocklistid",
-                    "column_order": 2
+                    "column_order": 2,
+					"example_values": [
+                        "1567080520"
+                    ]					
                 },
                 {
                     "data_path": "action_result.status",
@@ -458,7 +922,7 @@
         {
             "action": "list endpoints",
             "identifier": "list_endpoints",
-            "description": "List all the endpoints/sensors configured on the device",
+            "description": "List all the registered agents",
             "verbose": "",
             "type": "investigate",
             "read_only": true,
@@ -468,7 +932,7 @@
                     "data_type": "string",
                     "required": false,
                     "primary": false,
-                    "contains": [],
+                    "contains": ["host name"],
                     "value_list": [],
                     "default": "all",
                     "order": 0
@@ -502,8 +966,8 @@
                     "data_type": "string",
                     "required": false,
                     "primary": false,
-                    "contains": [],
-                    "value_list": [],
+                    "contains": ["user name"],
+                    "value_list": ["user name"],
                     "default": "",
                     "order": 2
                 },
@@ -527,7 +991,7 @@
                     "required": false,
                     "primary": false,
                     "contains": [
-                        "airlock agentid"
+                        
                     ],
                     "value_list": [],
                     "default": "",
@@ -574,8 +1038,7 @@
                 {
                     "data_path": "action_result.data.*.*.username",
                     "data_type": "string",
-                    "contains": [
-                    ],
+                    "contains": ["user name"],
                     "column_name": "username",
                     "column_order": 2
                 },               
@@ -609,48 +1072,42 @@
                 {
                     "data_path": "action_result.data.*.*.clientversion",
                     "data_type": "string",
-                    "contains": [
-                    ],
+                    "contains": [],
                     "column_name": "Client Version",
                     "column_order": 6
                 },
                 {
                     "data_path": "action_result.data.*.*.freespace",
                     "data_type": "string",
-                    "contains": [
-                    ],
+                    "contains": [],
                     "column_name": "Free Disk Space",
                     "column_order": 7
                 },
                 {
                     "data_path": "action_result.data.*.*.agentid",
                     "data_type": "string",
-                    "contains": [
-                        "airlock agentid"
-                    ],
+                    "contains": [],
                     "column_name": "agentid",
                     "column_order": 8
                 },
                 {
                     "data_path": "action_result.data.*.*.groupid",
                     "data_type": "string",
-                    "contains": ["airlock policyid"],
+                    "contains": [],
                     "column_name": "policy_id",
                     "column_order": 9
                 },
                 {
                     "data_path": "action_result.data.*.*.os",
                     "data_type": "string",
-                    "contains": [
-                    ],
+                    "contains": [],
                     "column_name": "Operating System",
                     "column_order": 10
                 },
                 {
                     "data_path": "action_result.data.*.*.policyversion",
                     "data_type": "string",
-                    "contains": [
-                    ],
+                    "contains": [],
                     "column_name": "Policy Version",
                     "column_order": 11
                 },
@@ -668,7 +1125,7 @@
                     "data_path": "action_result.parameter.agentid",
                     "data_type": "string",
                     "contains": [
-                        "airlock agentid"
+                        
                     ]
                 },
                 {
@@ -687,8 +1144,7 @@
                 {
                     "data_path": "action_result.parameter.groupid",
                     "data_type": "string",
-                    "contains": [
-                    ]
+                    "contains": []
                 },
                 {
                     "data_path": "action_result.parameter.domain",
@@ -707,8 +1163,7 @@
                 {
                     "data_path": "action_result.parameter.username",
                     "data_type": "string",
-                    "contains": [
-                    ]
+                    "contains": ["user name"]
                 },
                 {
                     "data_path": "action_result.parameter.status",
@@ -746,12 +1201,12 @@
             "read_only": false,
             "parameters": {
                 "otpid": {
-                    "description": "Target OTP code to revoke",
+                    "description": "The ID of the OTP Code you want to revoke",
                     "data_type": "string",
                     "required": true,
                     "primary": false,
                     "contains": [
-                        "airlock otpid"
+                        
                     ],
                     "value_list": [],
                     "default": "",
@@ -763,7 +1218,7 @@
                     "data_path": "action_result.parameter.otpid",
                     "data_type": "string",
                     "contains": [
-                        "airlock otpid"
+                        
                     ],
                     "column_name": "otpcode",
                     "column_order": 0
@@ -807,7 +1262,7 @@
         {
             "action": "otp retrieve",
             "identifier": "otp_retrieve",
-            "description": "One Time Password Retrive",
+            "description": "One Time Password Retrieve",
             "verbose": "Retrieve an OTP code for a particular computer (agent) within Airlock. You must specify the OTP 'duration' and unique 'agentid' to retrieve the code. Unique 'agentid' parameters can be obtained from the /agent/find endpoint.\n\n",
             "type": "generic",
             "read_only": false,
@@ -818,24 +1273,24 @@
                     "required": true,
                     "primary": false,
                     "contains": [
-                        "airlock agentid"
+                        
                     ],
                     "value_list": [],
                     "default": "",
                     "order": 0
                 },
                 "purpose": {
-                    "description": "Message about why you are requesting the OTP Password",
+                    "description": "Message about why you are requesting the OTP Code",
                     "data_type": "string",
                     "required": true,
                     "primary": false,
                     "contains": [],
                     "value_list": [],
-                    "default": "",
+                    "default": "Requested by Splunk Phantom Action",
                     "order": 1
                 },
                 "duration": {
-                    "description": "Duration of OTP passcode",
+                    "description": "Duration of OTP Code",
                     "data_type": "string",
                     "required": true,
                     "primary": false,
@@ -856,7 +1311,7 @@
                     "data_path": "action_result.parameter.agentid",
                     "data_type": "string",
                     "contains": [
-                        "airlock agentid"
+                        
                     ],
                     "column_name": "agentid",
                     "column_order": 0
@@ -901,7 +1356,7 @@
                     "data_path": "action_result.data.*.response.otpid",
                     "data_type": "string",
                     "contains": [
-                        "airlock otpid"
+                        
                     ],
                     "column_name": "otpid",
                     "column_order": 4
@@ -933,7 +1388,7 @@
             "identifier": "lookup_hash",
             "description": "Lookup SHA256 hash",
             "verbose": "Query the Airlock file repository by specifying the hash value(s) you would like to lookup. NOTE: Only SHA256 hashes are supported.",
-            "type": "information",
+            "type": "investigate",
             "read_only": true,
             "parameters": {
                 "hash": {
@@ -957,7 +1412,10 @@
                         "sha256"
                     ],
                     "column_name": "hash",
-                    "column_order": 0
+                    "column_order": 0,
+					"example_values": [
+                        "f0eb87677a689a88b58a0613dfd7252fb850393c"
+                    ]
                 },        
                 {
                     "data_path": "action_result.data.*.response.results.*.data.origname",
@@ -997,7 +1455,7 @@
                 {
                     "data_path": "action_result.data.*.response.results.*.data.filesize",
                     "data_type": "string",
-                    "contains": [],
+                    "contains": ["file size"],
                     "column_name": "filesize",
                     "column_order": 3
                 },
@@ -1053,14 +1511,14 @@
                 {
                     "data_path": "action_result.data.*.response.results.*.data.filepath",
                     "data_type": "string",
-                    "contains": [],
+                    "contains": ["file path"],
                     "column_name": "File Path",
                     "column_order": 3
                 },
                 {
                     "data_path": "action_result.data.*.response.results.*.data.filename",
                     "data_type": "string",
-                    "contains": [],
+                    "contains": ["file name"],
                     "column_name": "File Name",
                     "column_order": 3
                 },
@@ -1123,6 +1581,10 @@
                     "data_path": "action_result.summary",
                     "data_type": "string"
                 },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string"
+                },				
                 {
                     "data_path": "action_result.message",
                     "data_type": "string"
