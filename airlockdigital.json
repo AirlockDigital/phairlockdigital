@@ -1,7 +1,7 @@
 {
     "appid": "b29ae591-b692-4435-98e9-b0619e2e2476",
     "name": "Airlock Digital",
-    "description": "This app integrates Splunk Phantom with Airlock Digital's REST API Endpoints",
+    "description": "This app provides investigative, containment and management actions for Airlock Digital's Application Allowlisting / Whitelisting software",
     "type": "endpoint",
     "product_vendor": "Airlock",
     "logo": "airlockdigital.svg",
@@ -18,7 +18,7 @@
     "app_wizard_version": "1.0.0",
     "configuration": {
         "apiKey": {
-            "description": "API Key to connect to Airlock",
+            "description": "Airlock API Key",
             "data_type": "string",
             "required": true,
             "value_list": [],
@@ -26,11 +26,11 @@
             "order": 0
         },
         "base_url": {
-            "description": "Your endpoint url",
+            "description": "Airlock Digital REST API URL",
             "data_type": "string",
             "required": true,
             "value_list": [],
-            "default": "",
+            "default": "https://[airlockservername.com]:3129/v1/",
             "order": 1
         }
     },
@@ -1161,7 +1161,7 @@
                 },
                 "status": {
                     "description": "Status of device",
-                    "data_type": "string",
+                    "data_type": "numeric",
                     "required": false,
                     "primary": false,
                     "contains": [],
@@ -1339,12 +1339,13 @@
                 },
                 {
                     "data_path": "action_result.parameter.status",
-                    "data_type": "string",
+                    "data_type": "numeric",
                     "contains": [
                     ],
 					"example_values": [
                         "0",
-						"1"
+						"1",
+						"3"
                     ]					
                 },
                 {
