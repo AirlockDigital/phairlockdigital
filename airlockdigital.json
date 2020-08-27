@@ -90,10 +90,16 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.*.error",
+                    "data_path": "action_result.data.error",
                     "data_type": "string",
                     "column_name": "response",
-                    "column_order": 1
+                    "column_order": 1,
+					"example_values": [
+                        "Success",
+						"Blocklist not found",
+						"Invalid SHA256"
+                    ]					
+					
                 },
                 {
                     "data_path": "action_result.parameter.blocklistid",
@@ -137,7 +143,7 @@
             "identifier": "disallow_hash",
             "description": "Disallow (remove) hashes from one or more Application Captures",
             "verbose": "",
-            "type": "correct",
+            "type": "contain",
             "read_only": false,
             "parameters": {
                 "hash": {
@@ -176,10 +182,14 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.*.error",
+                    "data_path": "action_result.data.error",
                     "data_type": "string",
                     "column_name": "response",
-                    "column_order": 1
+                    "column_order": 1,
+					"example_values": [
+                        "Success",
+						"Incomplete Parameters"
+                    ]					
                 },
                 {
                     "data_path": "action_result.parameter.applicationid",
@@ -243,7 +253,13 @@
                     "data_type": "string",
                     "contains": [],
                     "column_name": "Type",
-                    "column_order": 0
+                    "column_order": 0,
+					"example_values": [
+                        "application",
+						"baseline",
+						"blocklist",
+						"group"
+                    ]					
                 },
                 {
                     "data_path": "action_result.data.*.*.name",
@@ -251,14 +267,21 @@
                     "contains": [
                     ],
                     "column_name": "Name",
-                    "column_order": 2
+                    "column_order": 2,
+					"example_values": [
+                        "Bulk Add"
+                    ]					
                 },
                 {
                     "data_path": "action_result.data.*.*.id",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "ID",
-                    "column_order": 3
+                    "column_order": 3,
+					"example_values": [
+                        "a2d3b733-1261-4449-b91e-33f6fa59abbe",
+						"154419029"
+                    ]
                 },
 				{
                     "data_path": "action_result.data.*.*.parent",
@@ -266,21 +289,32 @@
                     "contains": [
                     ],
                     "column_name": "Parent Group",
-                    "column_order": 4
-                },				
-                {
-                    "data_path": "action_result.status",
-                    "data_type": "string",
-                    "column_name": "status",
-                    "column_order": 5
+                    "column_order": 4,
+					"example_values": [
+                        "a3144513-1331-4229-b91e-33414a455aaa5",
+						"global-policy-settings",
+						"null"
+                    ]
                 },
                 {
                     "data_path": "action_result.parameter.policy_type",
                     "contains": [],					
                     "data_type": "string",
                     "column_name": "status",
-                    "column_order": 6
-                },				
+                    "column_order": 6,
+					"example_values": [
+                        "application",
+						"baseline",
+						"blocklist",
+						"group"
+                    ]					
+                },					
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "column_name": "status",
+                    "column_order": 5
+                },			
                 {
                     "data_path": "action_result.summary",
                     "data_type": "string"
@@ -308,7 +342,7 @@
             "identifier": "list_policy",
             "description": "List the policy configuration of a specified group",
             "verbose": "",
-            "type": "correct",
+            "type": "information",
             "read_only": true,
             "parameters": {
 			    "group_id": {
@@ -328,238 +362,358 @@
                     "data_type": "string",
                     "contains": [],
                     "column_name": "Group ID",
-                    "column_order": 0
+                    "column_order": 0,
+					"example_values": [
+                        "a2d3b733-1261-4449-b91e-33f6fa59abbe"
+                    ]					
                 },
                 {
                     "data_path": "action_result.data.*.response.name",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "Group Name",
-                    "column_order": 1
+                    "column_order": 1,
+					"example_values": [
+                        "Sydney Workstations"
+                    ]						
                 },
                 {
                     "data_path": "action_result.data.*.response.policyver",
-                    "data_type": "string",
+                    "data_type": "numeric",
                     "contains": [],
                     "column_name": "Policy Version",
-                    "column_order": 2
+                    "column_order": 2,
+					"example_values": [
+                        "37"
+                    ]						
                 },
                 {
                     "data_path": "action_result.data.*.response.parent",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "Parent Group",
-                    "column_order": 3
+                    "column_name": "Parent Group Name",
+                    "column_order": 3,
+					"example_values": [
+                        "Workstations"
+                    ]						
                 },
                 {
                     "data_path": "action_result.data.*.response.hashsb_ver",
-                    "data_type": "string",
+                    "data_type": "numeric",
                     "contains": [],
                     "column_name": "Hash DB Version",
-                    "column_order": 4
+                    "column_order": 4,
+					"example_values": [
+                        "19"
+                    ]						
                 },
                 {
                     "data_path": "action_result.data.*.response.agentstopcode",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "Agent Stop Code",
-                    "column_order": 5
+                    "column_order": 5,
+					"example_values": [
+                        "Password123!"
+                    ]						
                 },
                 {
                     "data_path": "action_result.data.*.response.auditmode",
-                    "data_type": "string",
+                    "data_type": "numeric",
                     "contains": [],
                     "column_name": "Audit Mode",
-                    "column_order": 6
+                    "column_order": 6,
+					"example_values": [
+						"0",
+                        "1"
+                    ]						
                 },
                 {
                     "data_path": "action_result.data.*.response.enable_notifications",
-                    "data_type": "string",
+                    "data_type": "numeric",
                     "contains": [],
                     "column_name": "Enable Notifications",
-                    "column_order": 7
+                    "column_order": 7,
+					"example_values": [
+						"0",
+                        "1"
+                    ]						
                 },
                 {
                     "data_path": "action_result.data.*.response.notification_message",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "Notification Message",
-                    "column_order": 8
+                    "column_order": 8,
+					"example_values": [
+						"%filename% prevented from executing"
+                    ]					
                 },
                 {
                     "data_path": "action_result.data.*.response.poll_time",
-                    "data_type": "string",
+                    "data_type": "numeric",
                     "contains": [],
                     "column_name": "Poll Time",
-                    "column_order": 9
+                    "column_order": 9,
+					"example_values": [
+						"600"
+                    ]					
                 },
                 {
                     "data_path": "action_result.data.*.response.trusted_upload",
-                    "data_type": "string",
+                    "data_type": "numeric",
                     "contains": [],
                     "column_name": "Trusted Upload",
-                    "column_order": 10
+                    "column_order": 10,
+					"example_values": [
+						"0",
+                        "1"
+                    ]				
                 },
                 {
                     "data_path": "action_result.data.*.response.pslockdown",
-                    "data_type": "string",
+                    "data_type": "numeric",
                     "contains": [],
                     "column_name": "PowerShell Language Mode",
-                    "column_order": 11
+                    "column_order": 11,
+					"example_values": [
+						"0",
+                        "1"
+                    ]					
                 },
                 {
                     "data_path": "action_result.data.*.response.script_enabled",
-                    "data_type": "string",
+                    "data_type": "numeric",
                     "contains": [],
                     "column_name": "Script Control Enabled",
-                    "column_order": 12
+                    "column_order": 12,
+					"example_values": [
+						"0",
+                        "1",
+						"2"
+                    ]					
                 },
                 {
                     "data_path": "action_result.data.*.response.batch",
-                    "data_type": "string",
+                    "data_type": "numeric",
                     "contains": [],
                     "column_name": "Batch Scripts",
-                    "column_order": 13
+                    "column_order": 13,
+					"example_values": [
+						"0",
+                        "1"
+                    ]					
                 },
                 {
                     "data_path": "action_result.data.*.response.powershell",
-                    "data_type": "string",
+                    "data_type": "numeric",
                     "contains": [],
                     "column_name": "Powershell Scripts",
-                    "column_order": 14
+                    "column_order": 14,
+					"example_values": [
+						"0",
+                        "1"
+                    ]					
                 },
                 {
                     "data_path": "action_result.data.*.response.command",
-                    "data_type": "string",
+                    "data_type": "numeric",
                     "contains": [],
                     "column_name": "Command Scripts",
-                    "column_order": 15
+                    "column_order": 15,
+					"example_values": [
+						"0",
+                        "1"
+                    ]					
                 },
                 {
                     "data_path": "action_result.data.*.response.vbscript",
-                    "data_type": "string",
+                    "data_type": "numeric",
                     "contains": [],
                     "column_name": "VB Scripts",
-                    "column_order": 16
+                    "column_order": 16,
+					"example_values": [
+						"0",
+                        "1"
+                    ]					
                 },
                 {
                     "data_path": "action_result.data.*.response.javascript",
-                    "data_type": "string",
+                    "data_type": "numeric",
                     "contains": [],
                     "column_name": "Javascript",
-                    "column_order": 17
+                    "column_order": 17,
+					"example_values": [
+						"0",
+                        "1"
+                    ]					
                 },
                 {
                     "data_path": "action_result.data.*.response.windowsinstaller",
-                    "data_type": "string",
+                    "data_type": "numeric",
                     "contains": [],
                     "column_name": "Windows Installer Scripts",
-                    "column_order": 18
+                    "column_order": 18,
+					"example_values": [
+						"0",
+                        "1"
+                    ]					
                 },
                 {
                     "data_path": "action_result.data.*.response.htmlapplication",
-                    "data_type": "string",
+                    "data_type": "numeric",
                     "contains": [],
                     "column_name": "HTML Application Scripts",
-                    "column_order": 19
+                    "column_order": 19,
+					"example_values": [
+						"0",
+                        "1"
+                    ]					
                 },
                 {
                     "data_path": "action_result.data.*.response.javaapplication",
-                    "data_type": "string",
+                    "data_type": "numeric",
                     "contains": [],
                     "column_name": "Java Application Scripts",
-                    "column_order": 20
+                    "column_order": 20,
+					"example_values": [
+						"0",
+                        "1"
+                    ]					
                 },
                 {
                     "data_path": "action_result.data.*.response.windowsscriptcomponent",
-                    "data_type": "string",
+                    "data_type": "numeric",
                     "contains": [],
                     "column_name": "Windows Script Component Scripts",
-                    "column_order": 21
+                    "column_order": 21,
+					"example_values": [
+						"0",
+                        "1"
+                    ]					
                 },
                 {
                     "data_path": "action_result.data.*.response.python",
-                    "data_type": "string",
+                    "data_type": "numeric",
                     "contains": [],
                     "column_name": "Python Scripts",
-                    "column_order": 22
+                    "column_order": 22,
+					"example_values": [
+						"0",
+                        "1"
+                    ]					
                 },
                 {
                     "data_path": "action_result.data.*.response.proxyenabled",
-                    "data_type": "string",
+                    "data_type": "numeric",
                     "contains": [],
                     "column_name": "Proxy Enabled",
-                    "column_order": 23
+                    "column_order": 23,
+					"example_values": [
+						"0",
+                        "1"
+                    ]					
                 },
                 {
                     "data_path": "action_result.data.*.response.proxyserver",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "Proxy Server",
-                    "column_order": 24
+                    "column_order": 24,
+					"example_values": [
+						"proxyserver.dnsname"
+                    ]					
                 },
                 {
                     "data_path": "action_result.data.*.response.proxyport",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "Proxy Port",
-                    "column_order": 25
+                    "column_order": 25,
+					"example_values": [
+						"8080"
+                    ]						
                 },
                 {
                     "data_path": "action_result.data.*.response.proxyauth",
-                    "data_type": "string",
+                    "data_type": "numeric",
                     "contains": [],
                     "column_name": "Proxy Authentication",
-                    "column_order": 26
+                    "column_order": 26,
+					"example_values": [
+						"0",
+                        "1"
+                    ]						
                 },
                 {
                     "data_path": "action_result.data.*.response.proxyuser",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "Proxy Username",
-                    "column_order": 27
+                    "column_order": 27,
+					"example_values": [
+                        "username1"
+                    ]					
                 },
                 {
                     "data_path": "action_result.data.*.response.proxypass",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "Proxy Password",
-                    "column_order": 28
+                    "column_order": 28,
+					"example_values": [
+                        "Password123!"
+                    ]					
                 },
                 {
                     "data_path": "action_result.data.*.response.applications.*.applicationid",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "Application Capture ID",
-                    "column_order": 29
+                    "column_order": 29,
+					"example_values": [
+                        "154419029"
+                    ]					
                 },	
                 {
                     "data_path": "action_result.data.*.response.applications.*.name",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "Application Capture Name",
-                    "column_order": 30
+                    "column_order": 30,
+					"example_values": [
+                        "Bulk Add"
+                    ]					
                 },
                 {
                     "data_path": "action_result.data.*.response.baselines.*.baselineid",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "Baseline ID",
-                    "column_order": 31
+                    "column_order": 31,
+					"example_values": [
+                        "1542090580"
+                    ]					
                 },
                 {
                     "data_path": "action_result.data.*.response.baselines.*.name",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "Baseline Name",
-                    "column_order": 32
+                    "column_order": 32,
+					"example_values": [
+                        "Windows 10-2004-x64-August 2020"
+                    ]						
                 },
                 {
                     "data_path": "action_result.data.*.response.publishers.*.name",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "Publisher Name",
-                    "column_order": 33
+                    "column_order": 33,
+					"example_values": [
+                        "Microsoft Windows Publisher"
+                    ]					
                 },
                 {
                     "data_path": "action_result.data.*.response.blocklists.*.blocklistid",
@@ -576,43 +730,61 @@
                     "data_type": "string",
                     "contains": [],
                     "column_name": "Blocklist Name",
-                    "column_order": 35
+                    "column_order": 35,
+					"example_values": [
+                        "Microsoft recommended block rules"
+                    ]					
                 },
                 {
                     "data_path": "action_result.data.*.response.paths.*.name",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "Path Rule",
-                    "column_order": 36
+                    "column_order": 36,
+					"example_values": [
+                        "C:\\\\Adobe\\\\*Reader*\\\\pdfplug_ins\\\\*.api"
+                    ]					
                 },
                 {
                     "data_path": "action_result.data.*.response.commlistid",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "Communication List ID",
-                    "column_order": 37
+                    "column_order": 37,
+					"example_values": [
+                        "b0a951e1-ab50-40ee-9bbd-2c74ca58281d"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.response.commlist.*.name",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "Communication List Name",
-                    "column_order": 38
+                    "column_order": 38,
+					"example_values": [
+                        "relayagent.domain"
+                    ]					
                 },
                 {
                     "data_path": "action_result.data.*.response.commlist.*.ip",
                     "data_type": "string",
                     "contains": ["ip"],
                     "column_name": "Communication List IP",
-                    "column_order": 39
-                },				
-                {
-                    "data_path": "action_result.summary",
-                    "data_type": "string"
+                    "column_order": 39,
+					"example_values": [
+                        "10.1.1.129"
+                    ]					
                 },
                 {
                     "data_path": "action_result.parameter.group_id",
                     "contains": [],					
+                    "data_type": "string",
+					"example_values": [
+                        "a2d3b733-1261-4449-b91e-33f6fa59abbe"
+                    ]					
+                },				
+                {
+                    "data_path": "action_result.summary",
                     "data_type": "string"
                 },
                 {
@@ -669,25 +841,17 @@
             },
             "output": [
                 {
-                    "data_path": "action_result.data.*.response.groups.*.name",
+                    "data_path": "action_result.data.error",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "Policy Name",
-                    "column_order": 0
-                },
-                {
-                    "data_path": "action_result.data.*.response.groups.*.parent",
-                    "data_type": "string",
-                    "contains": [],
-                    "column_name": "Policy Parent",
-                    "column_order": 0
-                },
-                {
-                    "data_path": "action_result.data.*.response.groups.*.groupid",
-                    "data_type": "string",
-                    "contains": [],
-                    "column_name": "Policy ID",
-                    "column_order": 0
+                    "column_order": 0,
+					"example_values": [
+                        "Group not found",
+						"Agent not found",
+						"License expired",
+						"Endpoints count exceeded the license"
+                    ]						
                 },
                 {
                     "data_path": "action_result.status",
@@ -696,12 +860,18 @@
                 {
                     "data_path": "action_result.parameter.agent_id",
 					"contains": [],
-                    "data_type": "string"
+                    "data_type": "string",
+					"example_values": [
+                        "5a57f007-214c-4604-960e-1706f3bf10cd"
+                    ]					
                 },
                 {
                     "data_path": "action_result.parameter.group_id",
                     "contains": [],					
-                    "data_type": "string"
+                    "data_type": "string",
+					"example_values": [
+                        "a2d3b733-1261-4449-b91e-33f6fa59abbe"
+                    ]						
                 },				
                 {
                     "data_path": "action_result.summary",
@@ -730,7 +900,7 @@
             "identifier": "allow_hash",
             "description": "Allow (add) hashes in a Application Capture policy",
             "verbose": "",
-            "type": "contain",
+            "type": "correct",
             "read_only": false,
             "parameters": {
                 "hash": {
@@ -762,7 +932,7 @@
                     "primary": false,
                     "contains": ["file path"],
                     "value_list": [],
-                    "default": "C:\\phantom\\hash.dll",
+                    "default": "C:\\\\phantom\\\\hash.dll",
                     "order": 2
                 }					
             },
@@ -780,26 +950,39 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.*.error",
+                    "data_path": "action_result.data.error",
                     "data_type": "string",
                     "contains": [
                     ],
                     "column_name": "response",
-                    "column_order": 1
+                    "column_order": 1,
+					"example_values": [
+                        "Success",
+						"Incomplete Parameters",
+						"Application not found",
+						"Some hashes failed to be added because it is in an invalid format",
+						"No hashes added"
+                    ]					
                 },
                 {
                     "data_path": "action_result.parameter.applicationid",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "applicationid",
-                    "column_order": 2
+                    "column_order": 2,
+					"example_values": [
+                        "1544146718"
+                    ]					
                 },
                 {
                     "data_path": "action_result.parameter.path",
                     "data_type": "string",
                     "contains": ["file path"],
                     "column_name": "path",
-                    "column_order": 2
+                    "column_order": 2,
+					"example_values": [
+                        "C:\\\\phantom\\\\hash.dll"
+                    ]					
                 },				
                 {
                     "data_path": "action_result.status",
@@ -874,12 +1057,17 @@
                     ]	
                 },
                 {
-                    "data_path": "action_result.data.*.*.error",
+                    "data_path": "action_result.data.error",
                     "data_type": "string",
                     "contains": [
                     ],
                     "column_name": "response",
-                    "column_order": 1
+                    "column_order": 1,
+					"example_values": [
+                        "Success",
+						"Blocklist not found",
+						"Invalid SHA256"
+                    ]	
                 },
                 {
                     "data_path": "action_result.parameter.blocklistid",
@@ -895,7 +1083,7 @@
                     "data_path": "action_result.status",
                     "data_type": "string",
                     "column_name": "status",
-                    "column_order": 3
+                    "column_order": 3					
                 },
                 {
                     "data_path": "action_result.message",
@@ -924,7 +1112,7 @@
             "identifier": "list_endpoints",
             "description": "List all the registered agents",
             "verbose": "",
-            "type": "investigate",
+            "type": "investigative",
             "read_only": true,
             "parameters": {
                 "hostname": {
@@ -1029,18 +1217,25 @@
                 },
                 {
                     "data_path": "action_result.data.*.*.status",
-                    "data_type": "string",
+                    "data_type": "numeric",
                     "contains": [
                     ],
                     "column_name": "status",
-                    "column_order": 1
+                    "column_order": 1,
+					"example_values": [
+                        "0",
+						"1"
+                    ]						
                 },
                 {
                     "data_path": "action_result.data.*.*.username",
                     "data_type": "string",
                     "contains": ["user name"],
                     "column_name": "username",
-                    "column_order": 2
+                    "column_order": 2,
+					"example_values": [
+                        "username1"
+                    ]						
                 },               
                 {
                     "data_path": "action_result.data.*.*.domain",
@@ -1049,7 +1244,10 @@
                         "domain"
                     ],
                     "column_name": "domain",
-                    "column_order": 3
+                    "column_order": 3,
+					"example_values": [
+                        "example.domain"
+                    ]	
                 },
                 {
                     "data_path": "action_result.data.*.*.hostname",
@@ -1058,7 +1256,10 @@
                         "host name"
                     ],
                     "column_name": "hostname",
-                    "column_order": 4
+                    "column_order": 4,
+					"example_values": [
+                        "DESKTOP-LAB001"
+                    ]						
                 },
                 {
                     "data_path": "action_result.data.*.*.ip",
@@ -1067,49 +1268,70 @@
                         "ip"
                     ],
                     "column_name": "ip",
-                    "column_order": 5
+                    "column_order": 5,
+					"example_values": [
+                        "10.1.1.129"
+                    ]						
                 },
                 {
                     "data_path": "action_result.data.*.*.clientversion",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "Client Version",
-                    "column_order": 6
+                    "column_order": 6,
+					"example_values": [
+                        "4.6.1.0"
+                    ]						
                 },
                 {
                     "data_path": "action_result.data.*.*.freespace",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "Free Disk Space",
-                    "column_order": 7
+                    "column_order": 7,
+					"example_values": [
+                        "77"
+                    ]						
                 },
                 {
                     "data_path": "action_result.data.*.*.agentid",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "agentid",
-                    "column_order": 8
+                    "column_name": "Agent ID",
+                    "column_order": 8,
+					"example_values": [
+                        "1378682a-3d2f-4f13-9839-e12c9d6fd126"
+                    ]						
                 },
                 {
                     "data_path": "action_result.data.*.*.groupid",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "policy_id",
-                    "column_order": 9
+                    "column_name": "Group ID",
+                    "column_order": 9,
+					"example_values": [
+                        "a2d3b733-1261-4449-b91e-33f6fa59abbe"
+                    ]					
                 },
                 {
                     "data_path": "action_result.data.*.*.os",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "Operating System",
-                    "column_order": 10
+                    "column_order": 10,
+					"example_values": [
+                        "Windows 10 x64"
+                    ]					
                 },
                 {
                     "data_path": "action_result.data.*.*.policyversion",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "Policy Version",
-                    "column_order": 11
+                    "column_order": 11,
+					"example_values": [
+                        "37.19"
+                    ]						
                 },
                 {
                     "data_path": "action_result.summary",
@@ -1119,51 +1341,75 @@
                     "data_path": "action_result.parameter.status",
                     "data_type": "string",
                     "contains": [
-                    ]
+                    ],
+					"example_values": [
+                        "0",
+						"1"
+                    ]					
                 },
                 {
                     "data_path": "action_result.parameter.agentid",
                     "data_type": "string",
-                    "contains": [
-                        
-                    ]
+                    "contains": [  
+                    ],
+					"example_values": [
+                        "1378682a-3d2f-4f13-9839-e12c9d6fd126"
+                    ]					
                 },
                 {
                     "data_path": "action_result.parameter.hostname",
                     "data_type": "string",
                     "contains": [
                         "host name"
-                    ]
+                    ],
+					"example_values": [
+                        "DESKTOP-LAB001"
+                    ]					
                 },
                 {
                     "data_path": "action_result.parameter.os",
                     "data_type": "string",
                     "contains": [
-                    ]
+                    ],
+					"example_values": [
+                        "Windows 10 x64"
+                    ]					
                 },
                 {
                     "data_path": "action_result.parameter.groupid",
                     "data_type": "string",
-                    "contains": []
+                    "contains": [],
+					"example_values": [
+                        "a2d3b733-1261-4449-b91e-33f6fa59abbe"
+                    ]					
                 },
                 {
                     "data_path": "action_result.parameter.domain",
                     "data_type": "string",
                     "contains": [
                         "domain"
-                    ]
+                    ],
+					"example_values": [
+                        "example.domain"
+                    ]					
                 },
                 {
                     "data_path": "action_result.parameter.ip",
                     "data_type": "string",
                     "contains": [
                         "ip"
-                    ]
+                    ],
+					"example_values": [
+                        "10.1.1.129"
+                    ]					
                 },
                 {
                     "data_path": "action_result.parameter.username",
                     "data_type": "string",
-                    "contains": ["user name"]
+                    "contains": ["user name"],
+					"example_values": [
+                        "username1"
+                    ]					
                 },
                 {
                     "data_path": "action_result.parameter.status",
@@ -1205,9 +1451,7 @@
                     "data_type": "string",
                     "required": true,
                     "primary": false,
-                    "contains": [
-                        
-                    ],
+                    "contains": [],
                     "value_list": [],
                     "default": "",
                     "order": 0
@@ -1217,11 +1461,12 @@
                 {
                     "data_path": "action_result.parameter.otpid",
                     "data_type": "string",
-                    "contains": [
-                        
-                    ],
-                    "column_name": "otpcode",
-                    "column_order": 0
+                    "contains": [],
+                    "column_name": "otpid",
+                    "column_order": 0,
+					"example_values": [
+                        "f56142c9-fdc7-4abe-9974-4ba813dd1002"
+                    ]					
                 },
                 {
                     "data_path": "action_result.status",
@@ -1230,12 +1475,16 @@
                     "column_order": 1
                 },
                 {
-                    "data_path": "action_result.data.*.error",
+                    "data_path": "action_result.data.error",
                     "data_type": "string",
                     "contains": [
                     ],
                     "column_name": "response",
-                    "column_order": 2
+                    "column_order": 2,
+					"example_values": [
+                        "Success",
+						"OTP not found"
+                    ]						
                 },
                 {
                     "data_path": "action_result.summary",
@@ -1310,27 +1559,37 @@
                 {
                     "data_path": "action_result.parameter.agentid",
                     "data_type": "string",
-                    "contains": [
-                        
-                    ],
+                    "contains": [],
                     "column_name": "agentid",
-                    "column_order": 0
+                    "column_order": 0,
+					"example_values": [
+                        "5a57f007-214c-4604-960e-1706f3bf10cd"
+                    ]						
                 },
                 {
                     "data_path": "action_result.parameter.purpose",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "purpose",
-                    "column_order": 1
+                    "column_order": 1,
+					"example_values": [
+                        "OTP retrieved from Splunk Phantom"
+                    ]					
                 },
                 {
                     "data_path": "action_result.parameter.duration",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "duration",
-                    "column_order": 2
+                    "column_order": 2,
+					"example_values": [
+                        "15m",
+                        "1h",
+                        "6h",
+                        "24h",
+                        "7d"
+                    ]					
                 },
-                
                 {
                     "data_path": "action_result.status",
                     "data_type": "string",
@@ -1338,28 +1597,35 @@
                     "column_order": 3
                 },
                 {
-                    "data_path": "action_result.data.*.error",
+                    "data_path": "action_result.data.error",
                     "data_type": "string",
-                    "contains": [
-                    ],
+                    "contains": [],
                     "column_name": "response",
-                    "column_order": 2
+                    "column_order": 2,
+					"example_values": [
+                        "Agent not found",
+						"No available otp found"
+                    ]					
                 },
                 {
                     "data_path": "action_result.data.*.response.otpcode",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "otpcode",
-                    "column_order": 3
+                    "column_order": 3,
+					"example_values": [
+                        "12847518751"
+                    ]					
                 },
                 {
                     "data_path": "action_result.data.*.response.otpid",
                     "data_type": "string",
-                    "contains": [
-                        
-                    ],
+                    "contains": [],
                     "column_name": "otpid",
-                    "column_order": 4
+                    "column_order": 4,
+					"example_values": [
+                        "f56142c9-fdc7-4abe-9974-4ba813dd1002"
+                    ]					
                 },
                 {
                     "data_path": "action_result.summary",
@@ -1388,7 +1654,7 @@
             "identifier": "lookup_hash",
             "description": "Lookup SHA256 hash",
             "verbose": "Query the Airlock file repository by specifying the hash value(s) you would like to lookup. NOTE: Only SHA256 hashes are supported.",
-            "type": "investigate",
+            "type": "investigative",
             "read_only": true,
             "parameters": {
                 "hash": {
@@ -1422,154 +1688,234 @@
                     "data_type": "string",
                     "contains": ["file name"],
                     "column_name": "Original File Name",
-                    "column_order": 3
+                    "column_order": 3,
+					"example_values": [
+                        "explorer.exe"
+                    ]	
                 },
                 {
                     "data_path": "action_result.data.*.response.results.*.data.createtime",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "Create Time",
-                    "column_order": 3
+                    "column_order": 3,
+					"example_values": [
+                        "2020-01-01 00:00:00 +0000 UTC"
+                    ]				
                 },
                 {
                     "data_path": "action_result.data.*.response.results.*.data.modtime",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "Modification Time",
-                    "column_order": 3
+                    "column_order": 3,
+					"example_values": [
+                        "2020-01-01 00:00:00 +0000 UTC"
+                    ]					
                 },
                 {
                     "data_path": "action_result.data.*.response.results.*.data.datetime",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "First Seen",
-                    "column_order": 3
+                    "column_order": 3,
+					"example_values": [
+                        "2020-01-01 00:00:00 +0000 UTC"
+                    ]					
                 },
                 {
                     "data_path": "action_result.data.*.response.results.*.data.publisher",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "Publisher",
-                    "column_order": 3
+                    "column_order": 3,
+					"example_values": [
+                        "Microsoft Corporation",
+						"Not Signed"
+                    ]						
                 },
                 {
                     "data_path": "action_result.data.*.response.results.*.data.filesize",
                     "data_type": "string",
                     "contains": ["file size"],
                     "column_name": "filesize",
-                    "column_order": 3
-                },
-                {
-                    "data_path": "action_result.data.*.response.results.*.data.publisher",
-                    "data_type": "string",
-                    "contains": [],
-                    "column_name": "Publisher",
-                    "column_order": 3
+                    "column_order": 3,
+					"example_values": [
+                        "1325"
+                    ]							
                 },
                 {
                     "data_path": "action_result.data.*.response.results.*.data.md5",
                     "data_type": "string",
                     "contains": ["md5"],
                     "column_name": "MD5",
-                    "column_order": 3
+                    "column_order": 3,
+					"example_values": [
+                        "e8a5253ecad88d53ac510c7382bb54cc"
+                    ]					
                 },
                 {
                     "data_path": "action_result.data.*.response.results.*.data.sha128",
                     "data_type": "string",
                     "contains": ["sha128"],
                     "column_name": "SHA128",
-                    "column_order": 3
+                    "column_order": 3,
+					"example_values": [
+                        "53dc8d33e38b22b0bbbf1511fe7a6977cd783d97"
+                    ]						
                 },
+                {
+                    "data_path": "action_result.data.*.response.results.*.data.sha384",
+                    "data_type": "string",
+                    "contains": ["sha384"],
+                    "column_name": "SHA384",
+                    "column_order": 3,
+					"example_values": [
+                        "f54dbe5f7f09c96210a7f934cc0b1b6575d5cd..."
+                    ]							
+                },				
                 {
                     "data_path": "action_result.data.*.response.results.*.data.sha512",
                     "data_type": "string",
                     "contains": ["sha512"],
                     "column_name": "SHA512",
-                    "column_order": 3
+                    "column_order": 3,
+					"example_values": [
+                        "ccc80f377db9788a680cc689e8b29583131cb72..."
+                    ]							
                 },
                 {
                     "data_path": "action_result.data.*.response.results.*.data.description",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "Description",
-                    "column_order": 3
+                    "column_order": 3,
+					"example_values": [
+                        "Rufus USB Utility"
+                    ]					
                 },
                 {
                     "data_path": "action_result.data.*.response.results.*.data.productname",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "Product Name",
-                    "column_order": 3
+                    "column_order": 3,
+					"example_values": [
+                        "Rufus"
+                    ]					
                 },
                 {
                     "data_path": "action_result.data.*.response.results.*.data.productversion",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "Product Version",
-                    "column_order": 3
+                    "column_order": 3,
+					"example_values": [
+                        "2.2.688"
+                    ]					
                 },
                 {
                     "data_path": "action_result.data.*.response.results.*.data.filepath",
                     "data_type": "string",
                     "contains": ["file path"],
                     "column_name": "File Path",
-                    "column_order": 3
+                    "column_order": 3,
+					"example_values": [
+                        "C:\\\\code\\\\bin\\\\x64\\\\"
+                    ]					
                 },
                 {
                     "data_path": "action_result.data.*.response.results.*.data.filename",
                     "data_type": "string",
                     "contains": ["file name"],
                     "column_name": "File Name",
-                    "column_order": 3
+                    "column_order": 3,
+					"example_values": [
+                        "rufus-2.2.exe"
+                    ]					
                 },
                 {
                     "data_path": "action_result.data.*.response.results.*.data.reputation.status",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "Reputation Status",
-                    "column_order": 3
+                    "column_order": 3,
+					"example_values": [
+                        "KNOWN",
+						"UNKNOWN",
+						"SUSPICIOUS",
+						"MALICIOUS"
+                    ]					
                 },
                 {
                     "data_path": "action_result.data.*.response.results.*.data.reputation.threatname",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "Reputation Threat Name",
-                    "column_order": 3
+                    "column_order": 3,
+					"example_values": [
+                        "N/A",
+						"Trojan Heur.42"
+                    ]					
                 },
                 {
                     "data_path": "action_result.data.*.response.results.*.data.reputation.threatlevel",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "Reputation Threat Level",
-                    "column_order": 3
+                    "column_order": 3,
+					"example_values": [
+                        "N/A",
+						"0",
+						"1",
+						"2",
+						"3",
+						"4",
+						"5"
+                    ]						
                 },
                 {
                     "data_path": "action_result.data.*.response.results.*.data.reputation.scannermatch",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "Reputation Scanner Match",
-                    "column_order": 3
+                    "column_order": 3,
+					"example_values": [
+                        "10"
+                    ]					
+					
                 },
                 {
                     "data_path": "action_result.data.*.response.results.*.data.reputation.scannercount",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "Reputation Scanner Count",
-                    "column_order": 3
+                    "column_order": 3,
+					"example_values": [
+                        "42"
+                    ]					
                 },
                 {
                     "data_path": "action_result.data.*.response.results.*.data.reputation.lastseen",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "Reputation Last Seen",
-                    "column_order": 3
+                    "column_order": 3,
+					"example_values": [
+                        "Never",
+						"2020-01-10 18:58:03.262 +0000 UTC"
+                    ]					
                 },
                 {
                     "data_path": "action_result.data.*.response.results.*.data.reputation.timestamp",
                     "data_type": "string",
                     "contains": [],
                     "column_name": "Reputation Timestamp",
-                    "column_order": 3
+                    "column_order": 3,
+					"example_values": [
+						"N/A",
+						"2020-01-10 18:58:03.262 +0000 UTC"
+                    ]					
                 },
                 {
                     "data_path": "action_result.datetime",
